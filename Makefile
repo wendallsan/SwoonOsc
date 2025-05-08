@@ -1,10 +1,8 @@
 # Project Name
 TARGET = SwoonOsc
 
-USE_DAISYSP_LGPL = 1
-
 # Sources
-CPP_SOURCES = SwoonOsc.cpp SupaSawOsc.cpp SawOsc.cpp
+CPP_SOURCES = SwoonOsc.cpp SupaSawOsc.cpp SawOsc.cpp atone.cpp
 
 # Library Locations
 LIBDAISY_DIR = ../../libDaisy/

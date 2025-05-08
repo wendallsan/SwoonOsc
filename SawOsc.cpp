@@ -7,6 +7,6 @@ float SawOsc::Process(){
         float out = -1.f * ( ( phase_ * 2.f ) - 1.f );
         phase_ += phase_inc_;
         if( phase_ > 1.f ) phase_ -= 1.0f;
-        return out;
+        return out * amp_;
 }
 float SawOsc::CalcPhaseInc( float f ){ return f * sr_recip_; }
