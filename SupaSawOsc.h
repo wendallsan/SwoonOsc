@@ -7,7 +7,7 @@
 #ifdef __cplusplus
 /* 
 IMPLEMENTED USING DETAILS FROM:
-https://forum.orthogonaldevices.com/uploads/short-url/rLjREzRcZvvK2527rFnTGvuwY1b.pdf
+https://adamszabo.com/internet/adam_szabo_how_to_emulate_the_super_saw.pdf
 */
 namespace daisysp {
     #define DSY_SN_SUPASAW_H
