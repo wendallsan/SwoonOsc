@@ -27,8 +27,7 @@ namespace daisysp{
         void PhaseAdd(float _phase) { phase_ += (_phase * TWOPI_F); }
     private:
         float CalcPhaseInc(float f);
-        float amp_, freq_;
-        float sr_, sr_recip_, phase_, phase_inc_;
+        float amp_, freq_, sr_, sr_recip_, phase_, phase_inc_;
     };
 }
 #endif
