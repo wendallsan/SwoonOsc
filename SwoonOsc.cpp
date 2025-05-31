@@ -18,14 +18,12 @@ using namespace daisysp;
 enum inputs { IN_VPO, IN_FREQ_ADJ, IN_DRIFT_ADJ, IN_SHIFT_ADJ, IN_COARSE, IN_FINE, IN_DRIFT, IN_SHIFT, INS_COUNT };
 DaisySeed hw;
 SupaSawOsc osc;
-void AudioCallback( AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size ){
-	for( size_t i = 0; i < size; i++ ) out[0][i] = osc.Process();
-}
+Switch resetTrig;
+void AudioCallback( AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out, size_t size ){ for( size_t i = 0; i < size; i++ ) out[0][i] = osc.Process(); }
 void updateValues(){
 	osc.SetDrift( fclamp( hw.adc.GetFloat( IN_DRIFT ) + hw.adc.GetFloat( IN_DRIFT_ADJ ), 0.f, 0.99f ) );
 	osc.SetShift( fclamp( hw.adc.GetFloat( IN_SHIFT ) + hw.adc.GetFloat( IN_SHIFT_ADJ ), 0.f, 0.99f ) );
-	float coarseMidiValue = fmap( hw.adc.GetFloat( IN_COARSE ), 0.f, 60.f ),
-		fineDelta = coarseMidiValue / 24.f;
+	float coarseMidiValue = fmap( hw.adc.GetFloat( IN_COARSE ), 0.f, 60.f ), fineDelta = coarseMidiValue / 24.f;
 	osc.SetFreq( 
 		mtof( 
 			fclamp( 
@@ -37,6 +35,8 @@ void updateValues(){
 			) 
 		) 
 	);
+    resetTrig.Debounce();
+	if( resetTrig.RisingEdge() ) osc.Reset();
 }
 void initAdc(){
 	AdcChannelConfig adc_cfg[ INS_COUNT ];
@@ -54,14 +54,11 @@ void initAdc(){
 int main( void ){
 	hw.Init();
 	hw.SetAudioBlockSize( NUM_SAMPLES );
-	hw.SetAudioSampleRate( SaiHandle::Config::SampleRate::SAI_48KHZ );	
-	osc.Init( SAMPLE_RATE );
-	osc.SetDrift( 0.f );
-	osc.SetShift( 0.5f );
-	osc.SetFreq( 440.f );
-	osc.Reset();
+	hw.SetAudioSampleRate( SaiHandle::Config::SampleRate::SAI_48KHZ );
 	initAdc();
+    resetTrig.Init( hw.GetPin( 14 ), 1000 );
 	updateValues();
+	osc.Init( SAMPLE_RATE );
 	hw.StartAudio( AudioCallback );
 	while( true ) updateValues();
 }
