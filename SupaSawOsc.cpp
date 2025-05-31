@@ -14,6 +14,7 @@ namespace daisysp {
         hpf_.Init( sampleRate_ );
         float hpfFreq = freq_;
         hpf_.SetFreq( hpfFreq );
+        Reset();
     }   
     float SupaSawOsc::Process(){        
 		float superSawSignal = 0.0;
