@@ -25,26 +25,29 @@ void updateValues(){
 	osc.SetDrift( fclamp( hw.adc.GetFloat( IN_DRIFT ) + hw.adc.GetFloat( IN_DRIFT_ADJ ), 0.f, 0.99f ) );
 	osc.SetShift( fclamp( hw.adc.GetFloat( IN_SHIFT ) + hw.adc.GetFloat( IN_SHIFT_ADJ ), 0.f, 0.99f ) );
 	float coarseMidiValue = fmap( hw.adc.GetFloat( IN_COARSE ), 0.f, 60.f ),
-		fineRange = coarseMidiValue / 20.f, 
-		midiValue = fclamp( 
-			coarseMidiValue + // COARSE VALUE
-			fmap( hw.adc.GetFloat( IN_FINE ), -fineRange, fineRange ) + // FINE VALUE
-			fmap( hw.adc.GetFloat( IN_VPO ), 0.f, 60.f ), // VPO VALUE
-			0.f, 
-			127.f
-		);
-	osc.SetFreq( mtof( midiValue ) );
+		fineDelta = coarseMidiValue / 24.f;
+	osc.SetFreq( 
+		mtof( 
+			fclamp( 
+				coarseMidiValue + // COARSE VALUE
+				fmap( hw.adc.GetFloat( IN_FINE ), -fineDelta, fineDelta ) + // FINE VALUE
+				fmap( hw.adc.GetFloat( IN_VPO ), 0.f, 60.f ), // VPO VALUE
+				0.f, 
+				127.f
+			) 
+		) 
+	);
 }
 void initAdc(){
 	AdcChannelConfig adc_cfg[ INS_COUNT ];
-    adc_cfg[ IN_VPO ].InitSingle( PIN_VPO );
-    adc_cfg[ IN_FREQ_ADJ ].InitSingle( PIN_FREQ_ADJ );
-    adc_cfg[ IN_DRIFT_ADJ].InitSingle( PIN_DRIFT_ADJ );
-    adc_cfg[ IN_SHIFT_ADJ ].InitSingle( PIN_SHIFT_ADJ);
+	adc_cfg[ IN_VPO ].InitSingle( PIN_VPO );
+	adc_cfg[ IN_FREQ_ADJ ].InitSingle( PIN_FREQ_ADJ );
+	adc_cfg[ IN_DRIFT_ADJ].InitSingle( PIN_DRIFT_ADJ );
+	adc_cfg[ IN_SHIFT_ADJ ].InitSingle( PIN_SHIFT_ADJ);
 	adc_cfg[ IN_COARSE ].InitSingle( PIN_COARSE );
-    adc_cfg[ IN_FINE ].InitSingle( PIN_FINE );
-    adc_cfg[ IN_DRIFT ].InitSingle( PIN_DRIFT );
-    adc_cfg[ IN_SHIFT ].InitSingle( PIN_SHIFT );
+	adc_cfg[ IN_FINE ].InitSingle( PIN_FINE );
+	adc_cfg[ IN_DRIFT ].InitSingle( PIN_DRIFT );
+	adc_cfg[ IN_SHIFT ].InitSingle( PIN_SHIFT );
 	hw.adc.Init( adc_cfg, INS_COUNT );
 	hw.adc.Start();	
 }
